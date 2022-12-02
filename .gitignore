@@ -1,3 +1,6 @@
+# puzzle input files
+*.txt
+
 # Compiled class file
 *.class
 

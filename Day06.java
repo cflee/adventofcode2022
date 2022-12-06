@@ -12,6 +12,12 @@ public class Day06 {
         System.out.println(10 == part1("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"));
         System.out.println(11 == part1("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"));
         System.out.println(part1(input.get(0)));
+        System.out.println(19 == part2("mjqjpqmgbljsphdztnvjfqwrcgsmlb"));
+        System.out.println(23 == part2("bvwbjplbgvbhsrlpgdmjqwftvncz"));
+        System.out.println(23 == part2("nppdvjthqldpwncqszvftbrmjlhg"));
+        System.out.println(29 == part2("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"));
+        System.out.println(26 == part2("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"));
+        System.out.println(part2(input.get(0)));
     }
 
     static boolean uniqueRange(char[] chars, int start, int end) {
@@ -35,6 +41,13 @@ public class Day06 {
         return -1;
     }
 
-    static void part2(final List<String> input) {
+    static int part2(final String input) {
+        char[] chars = input.toCharArray();
+        for (int i = 14; i <= chars.length; i++) {
+            if (uniqueRange(chars, i - 14, i)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

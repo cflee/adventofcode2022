@@ -15,11 +15,9 @@ public class Day07 {
 
     static List<String> parentPaths(final List<String> path) {
         final List<String> result = new ArrayList<>();
+        result.add("");
         for (int i = 1; i <= path.size(); i++) {
             result.add(String.join("/", path.subList(0, i)));
-        }
-        if (path.size() == 0) {
-            result.add("");
         }
         return result;
     }
@@ -65,6 +63,18 @@ public class Day07 {
             }
         }
         System.out.println(eligibleSum);
+
+        int desiredSizeReduction = dirSizeTotal.get("") - (70000000 - 30000000);
+        int minReduction = Integer.MAX_VALUE;
+        System.out.println(dirSizeTotal.get(""));
+        System.out.println(desiredSizeReduction);
+        for (Map.Entry<String, Integer> dirSize : dirSizeTotal.entrySet()) {
+            int size = dirSize.getValue();
+            if (size >= desiredSizeReduction && size < minReduction) {
+                minReduction = size;
+            }
+        }
+        System.out.println(minReduction);
     }
 
     static void part2(final List<String> input) {

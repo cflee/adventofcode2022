@@ -27,7 +27,7 @@ rucksackLoop:
             Set<Character> left = new HashSet<>();
             for (int i = 0; i < rucksack.length(); i++) {
                 if (i < rucksack.length() / 2) {
-                    left.add(new Character(rucksack.charAt(i)));
+                    left.add(Character.valueOf(rucksack.charAt(i)));
                 } else {
                     if (left.contains(rucksack.charAt(i))) {
                         sum += mapItemToPriority(rucksack.charAt(i));
@@ -49,13 +49,13 @@ outer:
             Set<Character> seen1 = new HashSet<>();
             Set<Character> seen2 = new HashSet<>();
             for (int i = 0; i < rucksack1.length(); i++) {
-                seen1.add(new Character(rucksack1.charAt(i)));
+                seen1.add(Character.valueOf(rucksack1.charAt(i)));
             }
             for (int i = 0; i < rucksack2.length(); i++) {
-                seen2.add(new Character(rucksack2.charAt(i)));
+                seen2.add(Character.valueOf(rucksack2.charAt(i)));
             }
             for (int i = 0; i < rucksack3.length(); i++) {
-                Character item = new Character(rucksack3.charAt(i));
+                Character item = Character.valueOf(rucksack3.charAt(i));
                 if (seen1.contains(item) && seen2.contains(item)) {
                     sum += mapItemToPriority(rucksack3.charAt(i));
                     continue outer;

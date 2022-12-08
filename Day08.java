@@ -6,7 +6,7 @@ public class Day08 {
                 //"08-sample.txt"
                 "08.txt"
                 );
-        part1(input);
+        part2(input);
     }
 
     /* +---> y
@@ -73,5 +73,53 @@ public class Day08 {
     }
 
     static void part2(final List<String> input) {
+        int maxScore = 0;
+        int xLen = input.size();
+        int yLen = input.get(0).length();
+        for (int i = 0; i < xLen; i++) {
+            for (int j = 0; j < yLen; j++) {
+                int thisVal = input.get(i).charAt(j) - '0';
+                int left = 0, right = 0, top = 0, down = 0;
+                // left
+                for (int y = j - 1; y >= 0; y--) {
+                    int val = input.get(i).charAt(y) - '0';
+                    left += 1;
+                    if (val >= thisVal) {
+                        break;
+                    }
+                }
+                // right
+                for (int y = j + 1; y < yLen; y++) {
+                    int val = input.get(i).charAt(y) - '0';
+                    right += 1;
+                    if (val >= thisVal) {
+                        break;
+                    }
+                }
+                // top
+                for (int x = i - 1; x >= 0; x--) {
+                    int val = input.get(x).charAt(j) - '0';
+                    top += 1;
+                    if (val >= thisVal) {
+                        break;
+                    }
+                }
+                // down
+                for (int x = i + 1; x < xLen; x++) {
+                    int val = input.get(x).charAt(j) - '0';
+                    down += 1;
+                    if (val >= thisVal) {
+                        break;
+                    }
+                }
+
+                int score = left * right * top * down;
+                if (score > maxScore) {
+                    maxScore = score;
+                }
+            }
+        }
+
+        System.out.println(maxScore);
     }
 }

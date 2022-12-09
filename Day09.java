@@ -3,10 +3,10 @@ import java.util.*;
 public class Day09 {
     public static void main(final String[] args) throws Exception {
         final List<String> input = Utils.readFile(
-                //"09-sample.txt"
+                //"09-sample-2.txt"
                 "09.txt"
                 );
-        part1(input);
+        part2(input);
     }
     /* ^ x
      * |
@@ -30,6 +30,8 @@ public class Day09 {
         int diffY = head.y - tail.y;
         if (diffX >= -1 && diffX <= 1 && diffY >= -1 && diffY <= 1) {
             return tail;
+        } else if (Math.abs(diffY) == 2 && Math.abs(diffX) == 2) {
+            return new Point(tail.x + (diffX / 2), tail.y + (diffY / 2));
         } else if (Math.abs(diffY) == 2) {
             return new Point(tail.x + diffX, tail.y + (diffY / 2));
         } else if (Math.abs(diffX) == 2) {
@@ -60,6 +62,25 @@ public class Day09 {
     }
 
     static void part2(final List<String> input) {
+        final Set<Point> visited = new HashSet<>();
+        Point[] points = new Point[10];
+        for (int i = 0; i < points.length; i++) {
+            points[i] = new Point(0, 0);
+        }
+        visited.add(points[9]);
+        for (final String line : input) {
+            final String[] lineParts = line.split(" ");
+            final String dir = lineParts[0];
+            int count = Integer.parseInt(lineParts[1]);
+            for (int iter = 1; iter <= count; iter++) {
+                points[0] = movePoint(dir, points[0]);
+                for (int i = 1; i < points.length; i++) {
+                    points[i] = resolveTail(points[i - 1], points[i]);
+                }
+                visited.add(points[9]);
+            }
+        }
+        System.out.println(visited.size());
     }
 }
 
@@ -73,7 +94,7 @@ class Point {
     }
     
     public String toString() {
-        return "Point{x=" + x + ",y=" + y + "}";
+        return "{" + x + "," + y + "}";
     }
 
     @Override

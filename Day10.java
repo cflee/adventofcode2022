@@ -7,7 +7,7 @@ public class Day10 {
                 //"10-sample-2.txt"
                 "10.txt"
                 );
-        part1(input);
+        part2(input);
     }
 
     static int checkBreakpoints(final List<Integer> breakpoints, final int clock1, final int clock2) {
@@ -47,5 +47,36 @@ public class Day10 {
     }
 
     static void part2(final List<String> input) {
+        List<String> output = new ArrayList<>(240);
+        Iterator<String> inputIter = input.iterator();
+        int x = 1;
+        int clockNext = 0; // clock cycle at which xNext should take effect
+        int xNext = 1; // updated value of x
+        for (int c = 0; c < 240; c++) {
+            if (c == clockNext) {
+                x = xNext;
+                if (inputIter.hasNext()) {
+                    final String[] parts = inputIter.next().split(" ");
+                    final String instr = parts[0];
+                    if (instr.equals("noop")) {
+                        clockNext += 1;
+                    } else if (instr.equals("addx")) {
+                        clockNext += 2;
+                        xNext += Integer.parseInt(parts[1]);
+                    }
+                }
+            }
+            if (Math.abs((c % 40) - x) <= 1) {
+                output.add("#");
+            } else {
+                output.add(".");
+            }
+        }
+        for (int r = 0; r < 6; r++) {
+            for (int c = 0; c < 40; c++) {
+                System.out.print(output.get(r * 40 + c));
+            }
+            System.out.println();
+        }
     }
 }

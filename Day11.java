@@ -10,13 +10,15 @@ public class Day11 {
                 "11.txt"
                 );
         final List<List<String>> inputPartitioned = Utils.partitionByBlankLines(input);
-        part1(inputPartitioned);
+        part2(inputPartitioned);
     }
 
+    static long allFactors = 1;
+
     static class Monkey {
-        List<Integer> items;
-        UnaryOperator<Integer> operation;
-        Function<Integer, Integer> test;
+        List<Long> items;
+        UnaryOperator<Long> operation;
+        Function<Long, Integer> test;
     }
 
     /* 
@@ -46,7 +48,7 @@ public class Day11 {
             m1.find();
             int monkeyId = Integer.parseInt(m1.group(1));
             m2.find();
-            monkey.items = Arrays.stream(m2.group(1).split(", ")).map(Integer::valueOf).collect(Collectors.toList());
+            monkey.items = Arrays.stream(m2.group(1).split(", ")).map(Long::valueOf).collect(Collectors.toList());
             m3.find();
             if (m3.group(1).equals("+")) {
                 if (m3.group(2).equals("old")) {
@@ -54,27 +56,14 @@ public class Day11 {
                 } else {
                     monkey.operation = (i) -> i + Integer.parseInt(m3.group(2));
                 }
-            } else if (m3.group(1).equals("-")) {
-                if (m3.group(2).equals("old")) {
-                    monkey.operation = (i) -> i - i;
-                } else {
-                    monkey.operation = (i) -> i - Integer.parseInt(m3.group(2));
-                }
             } else if (m3.group(1).equals("*")) {
                 if (m3.group(2).equals("old")) {
                     monkey.operation = (i) -> i * i;
                 } else {
                     monkey.operation = (i) -> i * Integer.parseInt(m3.group(2));
                 }
-            } else if (m3.group(1).equals("/")) {
-                if (m3.group(2).equals("old")) {
-                    monkey.operation = (i) -> i / i;
-                } else {
-                    monkey.operation = (i) -> i / Integer.parseInt(m3.group(2));
-                }
             }
             m4.find();
-
             m5.find();
             m6.find();
             monkey.test = (i) -> {
@@ -83,6 +72,7 @@ public class Day11 {
                 }
                 return Integer.parseInt(m6.group(1));
             };
+            allFactors *= Math.abs(Integer.parseInt(m4.group(1)));
             // assume they are in order...
             monkeys.add(monkey);
         }
@@ -95,10 +85,10 @@ public class Day11 {
         for (int r = 1; r <= 20; r++) {
             for (int m = 0; m < monkeys.size(); m++) {
                 Monkey monkey = monkeys.get(m);
-                Iterator<Integer> itemIter = monkey.items.iterator();
+                Iterator<Long> itemIter = monkey.items.iterator();
                 while (itemIter.hasNext()) {
-                    Integer item = itemIter.next();
-                    int worry = monkey.operation.apply(item) / 3;
+                    Long item = itemIter.next();
+                    long worry = monkey.operation.apply(item) / 3L;
                     int dest = monkey.test.apply(worry);
                     monkeys.get(dest).items.add(worry);
                     inspections[m] += 1;
@@ -110,6 +100,25 @@ public class Day11 {
         System.out.println(inspections[inspections.length - 1] * inspections[inspections.length - 2]);
     }
 
-    static void part2(final List<String> input) {
+    static void part2(final List<List<String>> input) {
+        List<Monkey> monkeys = parseInput(input);
+        long[] inspections = new long[monkeys.size()];
+        for (int r = 1; r <= 10000; r++) {
+            for (int m = 0; m < monkeys.size(); m++) {
+                Monkey monkey = monkeys.get(m);
+                Iterator<Long> itemIter = monkey.items.iterator();
+                while (itemIter.hasNext()) {
+                    Long item = itemIter.next();
+                    long worry = monkey.operation.apply(item) % allFactors;
+                    int dest = monkey.test.apply(worry);
+                    monkeys.get(dest).items.add(worry);
+                    inspections[m] += 1;
+                    itemIter.remove();
+                }
+            }
+        }
+        System.out.println(Arrays.toString(inspections));
+        Arrays.sort(inspections);
+        System.out.println(inspections[inspections.length - 1] * inspections[inspections.length - 2]);
     }
 }

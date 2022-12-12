@@ -6,7 +6,7 @@ public class Day12 {
                 //"12-sample.txt"
                 "12.txt"
                 );
-        part1(input);
+        part2(input);
     }
 
     static class Point implements Comparable<Point> {
@@ -46,14 +46,14 @@ public class Day12 {
     }
 
     static boolean isValidMove(char[][] map, Set<Point> visited, Point cur, Point next) {
-        // in range, and not visited, and at most 1 higher in elevation
+        // in range, and not visited, and at most 1 lower in elevation
         int curElev = map[cur.x][cur.y];
-        if (curElev == 'S') {
-            curElev = 'a';
+        if (curElev == 'E') {
+            curElev = 'z';
         }
         return next.x >= 0 && next.y >= 0 && next.x < map.length && next.y < map[0].length
             && !visited.contains(next)
-            && (map[next.x][next.y] == 'E' ? 'z' - curElev : map[next.x][next.y] - curElev) <= 1;
+            && (map[next.x][next.y] == 'S' ? 'a' - curElev : map[next.x][next.y] - curElev) >= -1;
     }
 
     static void updateDistances(Map<Point,Integer> distances, Point p) {
@@ -77,26 +77,27 @@ public class Day12 {
 
     static void part1(final List<String> input) {
         final char[][] map = parseMap(input);
-        Point start = new Point(0, 0, 0);
+        Point end = new Point(0, 0, 0);
 outer:
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[0].length; j++) {
-                if (map[i][j] == 'S') {
-                    start.x = i;
-                    start.y = j;
+                if (map[i][j] == 'E') {
+                    end.x = i;
+                    end.y = j;
+                    break outer;
                 }
             }
         }
         Set<Point> visited = new HashSet<>();
         Map<Point,Integer> distances = new HashMap<>();
         PriorityQueue<Point> queue = new PriorityQueue<>();
-        queue.add(start);
+        queue.add(end);
         while (!queue.isEmpty()) {
             Point cur = queue.remove();
             if (visited.contains(cur)) {
                 continue;
             }
-            if (map[cur.x][cur.y] == 'E') {
+            if (map[cur.x][cur.y] == 'S') {
                 System.out.println(distances.get(cur));
                 break;
             }
@@ -105,25 +106,52 @@ outer:
             Point down = new Point(cur.x + 1, cur.y, cur.dist + 1);
             Point right = new Point(cur.x, cur.y + 1, cur.dist + 1);
             Point left = new Point(cur.x, cur.y - 1, cur.dist + 1);
-            if (isValidMove(map, visited, cur, up)) {
-                updateDistances(distances, up);
-                queue.add(up);
-            }
-            if (isValidMove(map, visited, cur, down)) {
-                updateDistances(distances, down);
-                queue.add(down);
-            }
-            if (isValidMove(map, visited, cur, right)) {
-                updateDistances(distances, right);
-                queue.add(right);
-            }
-            if (isValidMove(map, visited, cur, left)) {
-                updateDistances(distances, left);
-                queue.add(left);
+            for (Point p : Arrays.asList(new Point[]{up, down, right, left})) {
+                if (isValidMove(map, visited, cur, p)) {
+                    updateDistances(distances, p);
+                    queue.add(p);
+                }
             }
         }
     }
 
     static void part2(final List<String> input) {
+        final char[][] map = parseMap(input);
+        Point end = new Point(0, 0, 0);
+outer:
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
+                if (map[i][j] == 'E') {
+                    end.x = i;
+                    end.y = j;
+                    break outer;
+                }
+            }
+        }
+        Set<Point> visited = new HashSet<>();
+        Map<Point,Integer> distances = new HashMap<>();
+        PriorityQueue<Point> queue = new PriorityQueue<>();
+        queue.add(end);
+        while (!queue.isEmpty()) {
+            Point cur = queue.remove();
+            if (visited.contains(cur)) {
+                continue;
+            }
+            if (map[cur.x][cur.y] == 'a') {
+                System.out.println(distances.get(cur));
+                break;
+            }
+            visited.add(cur);
+            Point up = new Point(cur.x - 1, cur.y, cur.dist + 1);
+            Point down = new Point(cur.x + 1, cur.y, cur.dist + 1);
+            Point right = new Point(cur.x, cur.y + 1, cur.dist + 1);
+            Point left = new Point(cur.x, cur.y - 1, cur.dist + 1);
+            for (Point p : Arrays.asList(new Point[]{up, down, right, left})) {
+                if (isValidMove(map, visited, cur, p)) {
+                    updateDistances(distances, p);
+                    queue.add(p);
+                }
+            }
+        }
     }
 }

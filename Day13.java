@@ -8,7 +8,7 @@ public class Day13 {
                 "13.txt"
                 );
         final List<List<String>> pairs = Utils.partitionByBlankLines(input);
-        part1(pairs);
+        part2(pairs);
     }
 
     static enum Result {
@@ -101,6 +101,30 @@ public class Day13 {
         System.out.println(sum);
     }
 
+    static class PacketComparator implements Comparator<List<Object>> {
+        public int compare(List<Object> o1, List<Object> o2) {
+            Result result = Day13.compare(o1, o2);
+            if (result == Result.YES) {
+                return -1;
+            }
+            return 1;
+        }
+    }
+
     static void part2(final List<List<String>> input) {
+        List<List<Object>> packets = new ArrayList<>();
+        for (int i = 0; i < input.size(); i++) {
+            final List<String> pair = input.get(i);
+            packets.add(parse(pair.get(0)));
+            packets.add(parse(pair.get(1)));
+        }
+        List<Object> divider1 = Arrays.asList(new Object[] { Arrays.asList( new Object[] { Integer.valueOf(2) }) });
+        List<Object> divider2 = Arrays.asList(new Object[] { Arrays.asList( new Object[] { Integer.valueOf(6) }) });
+        packets.add(divider1);
+        packets.add(divider2);
+        Collections.sort(packets, new PacketComparator());
+        int pos1 = packets.indexOf(divider1) + 1;
+        int pos2 = packets.indexOf(divider2) + 1;
+        System.out.println(pos1 * pos2);
     }
 }

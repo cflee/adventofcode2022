@@ -57,7 +57,9 @@ public class Day13 {
 
     static Result compare(final Object left, final Object right) {
         if (left instanceof List && right instanceof List) {
+            @SuppressWarnings("unchecked")
             List<Object> leftList = (List<Object>) left;
+            @SuppressWarnings("unchecked")
             List<Object> rightList = (List<Object>) right;
             for (int i = 0; i < Math.max(leftList.size(), rightList.size()); i++) {
                 if (i >= leftList.size() && i < rightList.size()) {

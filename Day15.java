@@ -5,8 +5,10 @@ public class Day15 {
     public static void main(final String[] args) throws Exception {
         //final List<String> input = Utils.readFile("15-sample.txt");
         //part1(input, 10);
+        //part2(input, 20);
         final List<String> input2 = Utils.readFile("15.txt");
-        part1(input2, 2000000);
+        //part1(input2, 2000000);
+        part2(input2, 4000000);
     }
 
     final static Character SENSOR = 'S';
@@ -108,6 +110,30 @@ public class Day15 {
         System.out.println(emptyCount);
     }
 
-    static void part2(final List<String> input) {
+    // +--> x
+    // |
+    // v y
+    static void part2(final List<String> input, final int limit) {
+        List<Sensor> sensors = parse(input);
+row:
+        for (int j = 0; j <= limit; j++) {
+cell:
+            for (int i = 0; i <= limit; i++) {
+sensor:
+                for (Sensor sensor : sensors) {
+                    int distance = dist(sensor.x, sensor.y, i, j);
+                    // other sensors may be close enough to be relevant
+                    if (distance > sensor.beaconDist) {
+                        continue sensor;
+                    }
+                    // use this sensor to skip cursor to end of its range within this row
+                    // calculate an absolute position as cur may be "to the right" so i += is wrong
+                    i = sensor.x + (sensor.beaconDist - Math.abs(sensor.y - j));
+                    continue cell;
+                }
+                System.out.println(i * 4000000L + j);
+                break row;
+            }
+        }
     }
 }

@@ -6,7 +6,7 @@ public class Day14 {
                 //"14-sample.txt"
                 "14.txt"
                 );
-        part1(input);
+        part2(input);
     }
 
     static class Coord {
@@ -131,5 +131,40 @@ sandOuter:
     }
 
     static void part2(final List<String> input) {
+        World world = parse(input);
+sandOuter:
+        for (int s = 1; ; s++) {
+            Coord sand = new Coord(500, 0);
+            while (true) {
+                if (sand.y == (world.maxY + 1)) {
+                    // stop at 1 only as this is the spot where it's already resting
+                    // on top of the virtual floor at (maxY + 2)
+                    world.put(sand, SAND);
+                    continue sandOuter;
+                }
+                if (!world.space.containsKey(new Coord(sand.x, sand.y + 1))) {
+                    sand.y += 1;
+                    continue;
+                }
+                if (!world.space.containsKey(new Coord(sand.x - 1, sand.y + 1))) {
+                    sand.x -= 1;
+                    sand.y += 1;
+                    continue;
+                }
+                if (!world.space.containsKey(new Coord(sand.x + 1, sand.y + 1))) {
+                    sand.x += 1;
+                    sand.y += 1;
+                    continue;
+                }
+                if (sand.x == 500 && sand.y == 0) {
+                    world.put(sand, SAND);
+                    // not (s-1) as this s'th is also at rest
+                    System.out.println((s));
+                    break sandOuter;
+                }
+                world.put(sand, SAND);
+                continue sandOuter;
+            }
+        }
     }
 }

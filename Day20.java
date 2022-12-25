@@ -6,14 +6,14 @@ public class Day20 {
                 //"20-sample.txt"
                 "20.txt"
                 );
-        part1(input);
+        part2(input);
     }
 
     static class Node {
         Node prev;
         Node next;
-        int data;
-        public Node(final int data) {
+        long data;
+        public Node(final long data) {
             this.data = data;
         }
         @Override public String toString() {
@@ -25,7 +25,7 @@ public class Day20 {
         Node zero = null;
         List<Node> nodes = new ArrayList<>();
         for (String line : input) {
-            Node node = new Node(Integer.parseInt(line));
+            Node node = new Node(Long.parseLong(line));
             nodes.add(node);
             if (node.data == 0) {
                 zero = node;
@@ -50,13 +50,13 @@ public class Day20 {
             Node newNext;
             if (cur.data > 0) {
                 newNext = curNext;
-                for (int i = 0; i < cur.data; i++) {
+                for (long i = 0; i < cur.data; i++) {
                     newNext = newNext.next;
                 }
                 newPrev = newNext.prev;
             } else {
                 newPrev = curPrev;
-                for (int i = 0; i > cur.data; i--) {
+                for (long i = 0; i > cur.data; i--) {
                     newPrev = newPrev.prev;
                 }
                 newNext = newPrev.next;
@@ -67,7 +67,7 @@ public class Day20 {
             newNext.prev = cur;
         }
         
-        int sum = 0;
+        long sum = 0;
         Node cur = zero;
         for (int i = 0; i < 3001; i++) {
             if (i % 1000 == 0 && i != 0) {
@@ -79,5 +79,61 @@ public class Day20 {
     }
 
     static void part2(final List<String> input) {
+        Node zero = null;
+        List<Node> nodes = new ArrayList<>();
+        for (String line : input) {
+            Node node = new Node(Long.parseLong(line) * 811589153L);
+            nodes.add(node);
+            if (node.data == 0) {
+                zero = node;
+            }
+            if (nodes.size() > 1) {
+                Node prev = nodes.get(nodes.size() - 2);
+                prev.next = node;
+                node.prev = prev;
+            }
+        }
+        Node first = nodes.get(0);
+        Node last = nodes.get(nodes.size() - 1);
+        last.next = first;
+        first.prev = last;
+
+        for (int r = 0; r < 10; r++) {
+            for (Node cur : nodes) {
+                Node curPrev = cur.prev;
+                Node curNext = cur.next;
+                curPrev.next = curNext;
+                curNext.prev = curPrev;
+                Node newPrev;
+                Node newNext;
+                if (cur.data > 0) {
+                    newNext = curNext;
+                    for (long i = 0; i < (cur.data % (nodes.size() - 1)); i++) {
+                        newNext = newNext.next;
+                    }
+                    newPrev = newNext.prev;
+                } else {
+                    newPrev = curPrev;
+                    for (long i = 0; i > (cur.data % (nodes.size() - 1)); i--) {
+                        newPrev = newPrev.prev;
+                    }
+                    newNext = newPrev.next;
+                }
+                cur.prev = newPrev;
+                cur.next = newNext;
+                newPrev.next = cur;
+                newNext.prev = cur;
+            }
+        }
+
+        long sum = 0;
+        Node cur = zero;
+        for (int i = 0; i < 3001; i++) {
+            if (i % 1000 == 0 && i != 0) {
+                sum += cur.data;
+            }
+            cur = cur.next;
+        }
+        System.out.println(sum);
     }
 }
